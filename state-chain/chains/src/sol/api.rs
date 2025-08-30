@@ -328,28 +328,6 @@ impl<Environment: SolanaEnvironment> SolanaApi<Environment> {
 							vec![sol_api_environment.address_lookup_table_account.clone()],
 						)
 					},
-					SolAsset::SolUsdt => {
-						let ata = derive_associated_token_account(
-							transfer_param.to,
-							sol_api_environment.usdt_token_mint_pubkey,
-						)
-						.map_err(SolanaTransactionBuildingError::FailedToDeriveAddress)?;
-						SolanaTransactionBuilder::transfer_token(
-							ata.address,
-							transfer_param.amount,
-							transfer_param.to,
-							sol_api_environment.vault_program,
-							sol_api_environment.vault_program_data_account,
-							sol_api_environment.token_vault_pda_account,
-							sol_api_environment.usdt_token_vault_ata,
-							sol_api_environment.usdt_token_mint_pubkey,
-							agg_key,
-							durable_nonce,
-							compute_price,
-							SOL_USDT_DECIMAL,
-							vec![sol_api_environment.address_lookup_table_account.clone()],
-						)
-					},
 				}?;
 
 				Ok((
@@ -498,32 +476,7 @@ impl<Environment: SolanaEnvironment> SolanaApi<Environment> {
 					SOL_USDC_DECIMAL,
 					compute_limit,
 					address_lookup_tables,
-				),
-				SolAsset::SolUsdt => SolanaTransactionBuilder::ccm_transfer_token(
-					derive_associated_token_account(
-						transfer_param.to,
-						sol_api_environment.usdt_token_mint_pubkey,
-					)
-					.map_err(SolanaTransactionBuildingError::FailedToDeriveAddress)?
-					.address,
-					transfer_param.amount,
-					transfer_param.to,
-					source_chain,
-					source_address,
-					message,
-					ccm_accounts,
-					sol_api_environment.vault_program,
-					sol_api_environment.vault_program_data_account,
-					sol_api_environment.token_vault_pda_account,
-					sol_api_environment.usdt_token_vault_ata,
-					sol_api_environment.usdt_token_mint_pubkey,
-					agg_key,
-					durable_nonce,
-					compute_price,
-					SOL_USDT_DECIMAL,
-					compute_limit,
-					address_lookup_tables,
-				),
+				),				
 			}
 			.inspect_err(|e| {
 				// CCM call building is NOT transactional - meaning when this fails,
