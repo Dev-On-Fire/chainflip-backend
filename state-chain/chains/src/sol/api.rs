@@ -328,6 +328,7 @@ impl<Environment: SolanaEnvironment> SolanaApi<Environment> {
 							vec![sol_api_environment.address_lookup_table_account.clone()],
 						)
 					},
+					// adding SOL.USDT
 					SolAsset::SolUsdt => {
 						let ata = derive_associated_token_account(
 							transfer_param.to,
@@ -499,6 +500,7 @@ impl<Environment: SolanaEnvironment> SolanaApi<Environment> {
 					compute_limit,
 					address_lookup_tables,
 				),
+				// adding SOL.USDT
 				SolAsset::SolUsdt => SolanaTransactionBuilder::ccm_transfer_token(
 					derive_associated_token_account(
 						transfer_param.to,
