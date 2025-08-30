@@ -25,7 +25,7 @@ use crate::{
 	address::EncodedAddress,
 	sol::{
 		sol_tx_core::{
-			consts::{SOL_USDC_DECIMAL, SYSTEM_PROGRAM_ID, TOKEN_PROGRAM_ID},
+			consts::{SOL_USDC_DECIMAL, SOL_USDT_DECIMAL, SYSTEM_PROGRAM_ID, TOKEN_PROGRAM_ID},
 			program_instructions::swap_endpoints::{
 				SwapEndpointProgram, SwapNativeParams, SwapTokenParams,
 			},
@@ -115,6 +115,47 @@ impl SolanaInstructionBuilder {
 			system_program_id(),
 		)
 	}
+
+	// adding vault function for SOL.USDT
+
+	pub fn x_swap_usdt(
+    api_environment: SolApiEnvironment,
+    destination_asset: Asset,
+    destination_address: EncodedAddress,
+    from: SolPubkey,
+    from_token_account: SolPubkey,
+    seed: SolSeed,
+    event_data_account: SolPubkey,
+    token_supported_account: SolPubkey,
+    input_amount: SolAmount,
+    cf_parameters: Vec<u8>,
+    ccm: Option<CcmChannelMetadataChecked>,
+) -> SolInstruction {
+    SwapEndpointProgram::with_id(api_environment.swap_endpoint_program).x_swap_token(
+        SwapTokenParams {
+            amount: input_amount,
+            dst_chain: destination_address.chain() as u32,
+            dst_address: destination_address.into_vec(),
+            dst_token: destination_asset as u32,
+            ccm_parameters: ccm.map(|metadata| metadata.into()),
+            cf_parameters,
+            decimals: SOL_USDT_DECIMAL,
+        },
+        seed.into(),
+        api_environment.vault_program_data_account,
+        api_environment.usdt_token_vault_ata,
+        from,
+        from_token_account,
+        event_data_account,
+        api_environment.swap_endpoint_program_data_account,
+        token_supported_account,
+        token_program_id(),
+        api_environment.usdt_token_mint_pubkey,
+        system_program_id(),
+    )
+}
+
+	
 }
 
 #[cfg(test)]
