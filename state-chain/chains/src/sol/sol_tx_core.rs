@@ -177,10 +177,18 @@ pub mod sol_test_values {
 		const_address("24PNhTaNtomHhoy3fTRaMhAFCRj4uHqhZEEoWrKDbR5p");
 	pub const TOKEN_VAULT_PDA_ACCOUNT: SolAddress =
 		const_address("CWxWcNZR1d5MpkvmL3HgvgohztoKyCDumuZvdPyJHK3d");
+	// missing for SOL.USDT at the moment
+	pub const USDT_TOKEN_MINT_PUB_KEY: SolAddress =
+		const_address("to be added later");
+
 	// This can be derived from the TOKEN_VAULT_PDA_ACCOUNT and the mintPubKey but we can have it
 	// stored There will be a different one per each supported spl-token
 	pub const USDC_TOKEN_VAULT_ASSOCIATED_TOKEN_ACCOUNT: SolAddress =
 		const_address("GgqCE4bTwMy4QWVaTRTKJqETAgim49zNrH1dL6zXaTpd");
+
+// missing for SOL.USDT at the moment
+	pub const USDT_TOKEN_VAULT_ASSOCIATED_TOKEN_ACCOUNT: SolAddress =
+		const_address("to be added later");
 	pub const SWAP_ENDPOINT_DATA_ACCOUNT_ADDRESS: SolAddress =
 		const_address("GgqCE4bTwMy4QWVaTRTKJqETAgim49zNrH1dL6zXaTpd");
 	pub const NONCE_ACCOUNTS: [SolAddress; 10] = [
@@ -268,7 +276,7 @@ pub mod sol_test_values {
 	pub const NEXT_NONCE: SolAddress = NONCE_ACCOUNTS[0];
 	pub const SOL: SolAsset = SolAsset::Sol;
 	pub const USDC: SolAsset = SolAsset::SolUsdc;
-
+	pub const USDT: SolAsset = SolAsset::SolUsdt;
 	// Arbitrary number used for testing
 	pub const TEST_COMPUTE_LIMIT: SolComputeLimit = 300_000u32;
 
@@ -283,6 +291,8 @@ pub mod sol_test_values {
 			token_vault_pda_account: TOKEN_VAULT_PDA_ACCOUNT,
 			usdc_token_mint_pubkey: USDC_TOKEN_MINT_PUB_KEY,
 			usdc_token_vault_ata: USDC_TOKEN_VAULT_ASSOCIATED_TOKEN_ACCOUNT,
+			usdt_token_mint_pubkey: USDT_TOKEN_MINT_PUB_KEY,
+			usdt_token_vault_ata: USDT_TOKEN_VAULT_ASSOCIATED_TOKEN_ACCOUNT,
 			swap_endpoint_program: SWAP_ENDPOINT_PROGRAM,
 			swap_endpoint_program_data_account: SWAP_ENDPOINT_PROGRAM_DATA_ACCOUNT,
 			alt_manager_program: ALT_MANAGER_PROGRAM,
@@ -386,6 +396,45 @@ pub mod sol_test_values {
 					USDC_TOKEN_MINT_PUB_KEY,
 					TOKEN_VAULT_PDA_ACCOUNT,
 					USDC_TOKEN_VAULT_ASSOCIATED_TOKEN_ACCOUNT,
+					SWAP_ENDPOINT_DATA_ACCOUNT_ADDRESS,
+					SWAP_ENDPOINT_PROGRAM,
+					SWAP_ENDPOINT_PROGRAM_DATA_ACCOUNT,
+					sol_prim::consts::TOKEN_PROGRAM_ID,
+					sol_prim::consts::SYS_VAR_INSTRUCTIONS,
+					sol_prim::consts::ASSOCIATED_TOKEN_PROGRAM_ID,
+					sol_prim::consts::SYSTEM_PROGRAM_ID,
+					sol_prim::consts::SYS_VAR_RECENT_BLOCKHASHES,
+					token_vault_ata,
+				],
+				NONCE_ACCOUNTS.to_vec(),
+			]
+			.into_iter()
+			.concat()
+			.into_iter()
+			.map(|a| a.into())
+			.collect::<Vec<_>>(),
+		}
+	}
+
+		pub fn chainflip_alt_usdt() -> SolAddressLookupTableAccount {
+		let token_vault_ata =
+			crate::sol::sol_tx_core::address_derivation::derive_associated_token_account(
+				TOKEN_VAULT_PDA_ACCOUNT,
+				USDT_TOKEN_MINT_PUB_KEY,
+			)
+			.unwrap()
+			.address;
+
+		SolAddressLookupTableAccount {
+			key: const_address("to be updated").into(),
+			addresses: vec![
+				vec![
+					VAULT_PROGRAM,
+					VAULT_PROGRAM_DATA_ADDRESS,
+					VAULT_PROGRAM_DATA_ACCOUNT,
+					USDT_TOKEN_MINT_PUB_KEY,
+					TOKEN_VAULT_PDA_ACCOUNT,
+					USDT_TOKEN_VAULT_ASSOCIATED_TOKEN_ACCOUNT,
 					SWAP_ENDPOINT_DATA_ACCOUNT_ADDRESS,
 					SWAP_ENDPOINT_PROGRAM,
 					SWAP_ENDPOINT_PROGRAM_DATA_ACCOUNT,
